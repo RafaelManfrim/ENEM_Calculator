@@ -70,8 +70,8 @@ export function MySimulations() {
     <Center flex={1}>
       <Box maxW="1280">
         <Flex>
-          <Heading fontSize="3xl">Minhas Metas</Heading>
-          <Button colorScheme="orange" size="sm" ml="auto">Nova Meta</Button>
+          <Heading fontSize="3xl">Minhas Simulações</Heading>
+          <Button colorScheme="orange" size="sm" ml="auto">Nova Simulação</Button>
         </Flex>
         {isLoadingSimulations ? (
           Array(12)
