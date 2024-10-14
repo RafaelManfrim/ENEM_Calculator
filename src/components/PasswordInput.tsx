@@ -1,14 +1,32 @@
-import { FormControl, FormLabel, InputProps as ChakraInputProps, Input as ChakraInput, FormErrorMessage, useDisclosure, useMergeRefs, InputGroup, InputRightElement, IconButton } from "@chakra-ui/react";
-import { FieldError } from "react-hook-form";
-import { forwardRef, ForwardRefRenderFunction as ForwardRefFunc, useRef } from 'react'
+import {
+  FormControl,
+  FormLabel,
+  InputProps as ChakraInputProps,
+  Input as ChakraInput,
+  FormErrorMessage,
+  useDisclosure,
+  useMergeRefs,
+  InputGroup,
+  InputRightElement,
+  IconButton,
+} from '@chakra-ui/react'
+import { FieldError } from 'react-hook-form'
+import {
+  forwardRef,
+  ForwardRefRenderFunction as ForwardRefFunc,
+  useRef,
+} from 'react'
 import { HiEye, HiEyeOff } from 'react-icons/hi'
 
 interface InputProps extends ChakraInputProps {
-  label: string;
+  label: string
   error?: FieldError
 }
 
-const InputBase: ForwardRefFunc<HTMLInputElement, InputProps> = ({ label, error, ...rest }, ref) => {
+const InputBase: ForwardRefFunc<HTMLInputElement, InputProps> = (
+  { label, error, ...rest },
+  ref,
+) => {
   const { isOpen, onToggle } = useDisclosure()
   const inputRef = useRef<HTMLInputElement>(null)
 

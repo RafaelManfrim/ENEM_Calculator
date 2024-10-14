@@ -1,11 +1,24 @@
-import { ButtonGroup, Container, IconButton, Stack, Text } from '@chakra-ui/react'
+import {
+  ButtonGroup,
+  Container,
+  IconButton,
+  Stack,
+  Text,
+} from '@chakra-ui/react'
 import { FaGithub, FaLinkedin, FaInstagram } from 'react-icons/fa'
 
 import { Logo } from './Logo'
 
 export function Footer() {
   return (
-    <Container as="footer" role="contentinfo" px="12" py="4" minW="100%" bgColor="gray.100">
+    <Container
+      as="footer"
+      role="contentinfo"
+      px="12"
+      py="4"
+      minW="100%"
+      bgColor="gray.100"
+    >
       <Stack>
         <Stack justify="space-between" direction="row" align="center">
           <Logo fontSize="3xl" />

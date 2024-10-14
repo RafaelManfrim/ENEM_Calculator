@@ -10,15 +10,15 @@ import {
 } from '@chakra-ui/react'
 import { useRef } from 'react'
 
-interface DeleteAmbitionDialogProps {
+interface DeleteSimulationDialogProps {
   disclosure: UseDisclosureReturn
   onDelete: () => void
 }
 
-export function DeleteAmbitionDialog({
+export function DeleteSimulationDialog({
   disclosure,
   onDelete,
-}: DeleteAmbitionDialogProps) {
+}: DeleteSimulationDialogProps) {
   const cancelRef = useRef(null)
 
   return (
@@ -30,12 +30,12 @@ export function DeleteAmbitionDialog({
       <AlertDialogOverlay>
         <AlertDialogContent>
           <AlertDialogHeader fontSize="lg" fontWeight="bold">
-            Excluir Meta
+            Excluir Simulação
           </AlertDialogHeader>
 
           <AlertDialogBody>
-            Tem certeza que deseja excluir esta meta? Você não poderá desfazer
-            esta ação posteriormente.
+            Tem certeza que deseja excluir esta simulação? Você não poderá
+            desfazer esta ação posteriormente.
           </AlertDialogBody>
 
           <AlertDialogFooter>

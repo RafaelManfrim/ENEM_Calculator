@@ -1,5 +1,5 @@
-import { Button } from "@chakra-ui/react"
-import { useLocation, useNavigate } from "react-router-dom"
+import { Button } from '@chakra-ui/react'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 interface NavLinkProps {
   title: string
@@ -28,7 +28,7 @@ export function NavLink({ title, path }: NavLinkProps) {
       borderTopWidth={3}
       onClick={handleClick}
       borderColor="transparent"
-      borderBottomColor={isActive ? "white" : "transparent"}
+      borderBottomColor={isActive ? 'white' : 'transparent'}
       borderRadius="0"
     >
       {title}

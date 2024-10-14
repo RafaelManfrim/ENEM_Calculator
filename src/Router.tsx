@@ -1,10 +1,10 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes } from 'react-router-dom'
 
-import { Home } from "./pages/Home";
-import { DefaultLayout } from "./pages/layouts/Default";
-import { LoginRegister } from "./pages/LoginRegister";
-import { MyAmbitions } from "./pages/MyAmbitions";
-import { MySimulations } from "./pages/MySimulations";
+import { Home } from './pages/Home'
+import { DefaultLayout } from './pages/layouts/Default'
+import { LoginRegister } from './pages/LoginRegister'
+import { MyAmbitions } from './pages/MyAmbitions'
+import { MySimulations } from './pages/MySimulations'
 
 export function Router() {
   return (

@@ -1,7 +1,34 @@
-import { Heading, Button, Center, Box, Flex, Skeleton, Table, Thead, Tr, Th, Tbody, Td, HStack } from "@chakra-ui/react"
-import { useEffect, useState } from "react"
+import {
+  Heading,
+  Button,
+  Box,
+  Flex,
+  Skeleton,
+  Table,
+  Thead,
+  Tr,
+  Th,
+  Tbody,
+  Td,
+  HStack,
+  useToast,
+  useDisclosure,
+} from '@chakra-ui/react'
+import { useEffect, useState } from 'react'
 
-interface Simulation {
+import { DeleteSimulationDialog } from '@components/Dialogs/MySimulations/DeleteSimulationDialog'
+import {
+  CreateSimulationFormType,
+  CreateSimulationModal,
+} from '@components/Modals/MySimulations/CreateSimulationModal'
+import {
+  EditSimulationFormType,
+  EditSimulationModal,
+} from '@components/Modals/MySimulations/EditSimulationModal'
+
+import { api } from '@lib/axios'
+
+export interface Simulation {
   id: number
   name: string
   math: number
@@ -51,13 +78,146 @@ export function MySimulations() {
     },
   ])
 
+  const [selectedSimulation, setSelectedSimulation] =
+    useState<Simulation | null>(null)
+
+  const toast = useToast()
+
+  const createSimulationModalDisclosure = useDisclosure()
+  const editSimulationModalDisclosure = useDisclosure()
+  const deleteSimulationModalDisclosure = useDisclosure()
+
+  async function handleCreateSimulation(data: CreateSimulationFormType) {
+    try {
+      const { data: simulation } = await api.post<Simulation>(
+        '/simulations/',
+        data,
+      )
+
+      toast({
+        title: 'Simulação cadastrada com sucesso',
+        description: 'Sua simulação foi cadastrada com sucesso.',
+        status: 'success',
+        duration: 9000,
+        isClosable: true,
+        position: 'top',
+      })
+
+      createSimulationModalDisclosure.onClose()
+      setSimulations((data) => {
+        return [...data, simulation]
+      })
+    } catch (error) {
+      console.log(error)
+
+      toast({
+        title: 'Erro ao cadastrar simulação',
+        description:
+          'Ocorreu um erro ao cadastrar sua simulação. Tente novamente mais tarde.',
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+        position: 'top',
+      })
+    }
+  }
+
+  async function handleEditSimulation(data: EditSimulationFormType) {
+    if (!selectedSimulation) {
+      return
+    }
+
+    try {
+      const { data: editedSimulation } = await api.put<Simulation>(
+        `/simulations/${selectedSimulation.id}/`,
+        data,
+      )
+
+      toast({
+        title: 'Simulação editada com sucesso',
+        description: 'Sua simulação foi editada com sucesso.',
+        status: 'success',
+        duration: 9000,
+        isClosable: true,
+        position: 'top',
+      })
+
+      editSimulationModalDisclosure.onClose()
+
+      setSimulations((oldSimulations) => {
+        return oldSimulations.map((simulation) => {
+          if (simulation.id === selectedSimulation.id) {
+            return editedSimulation
+          }
+
+          return simulation
+        })
+      })
+    } catch (error) {
+      console.log(error)
+
+      toast({
+        title: 'Erro ao editar simulação',
+        description:
+          'Ocorreu um erro ao editar sua simulação. Tente novamente mais tarde.',
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+        position: 'top',
+      })
+    } finally {
+      setSelectedSimulation(null)
+    }
+  }
+
+  async function handleDeleteSimulation(id: number) {
+    try {
+      await api.delete(`/simulations/${id}`)
+      setSimulations(simulations.filter((simulation) => simulation.id !== id))
+
+      toast({
+        title: 'Simulação excluída com sucesso',
+        description: 'Sua simulação foi excluída com sucesso.',
+        status: 'success',
+        duration: 9000,
+        isClosable: true,
+        position: 'top',
+      })
+    } catch (error) {
+      console.log(error)
+
+      toast({
+        title: 'Erro ao excluir simulação',
+        description:
+          'Ocorreu um erro ao excluir sua simulação. Tente novamente mais tarde.',
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+        position: 'top',
+      })
+    } finally {
+      setSelectedSimulation(null)
+      deleteSimulationModalDisclosure.onClose()
+    }
+  }
+
   useEffect(() => {
     async function loadSimulations() {
       try {
-        // const response = await api.get('/simulations')
-        // setSimulations(response.data)
+        const response = await api.get('/simulations')
+        setSimulations(response.data)
       } catch (error) {
         console.log(error)
+
+        toast({
+          title: 'Erro ao carregar simulações',
+          description:
+            'Ocorreu um erro ao carregar suas simulações. Tente novamente mais tarde.',
+          status: 'error',
+          duration: 9000,
+          isClosable: true,
+          position: 'top',
+        })
       } finally {
         setIsLoadingSimulations(false)
       }
@@ -67,11 +227,18 @@ export function MySimulations() {
   }, [])
 
   return (
-    <Center flex={1}>
-      <Box maxW="1280">
+    <Flex justify="center" flex={1}>
+      <Box maxW="1280" mt="4" px="12">
         <Flex>
           <Heading fontSize="3xl">Minhas Simulações</Heading>
-          <Button colorScheme="orange" size="sm" ml="auto">Nova Simulação</Button>
+          <Button
+            colorScheme="orange"
+            size="sm"
+            ml="auto"
+            onClick={createSimulationModalDisclosure.onOpen}
+          >
+            Nova Simulação
+          </Button>
         </Flex>
         {isLoadingSimulations ? (
           Array(12)
@@ -93,7 +260,7 @@ export function MySimulations() {
               </Tr>
             </Thead>
             <Tbody>
-              {simulations.map(simulation => (
+              {simulations.map((simulation) => (
                 <Tr key={simulation.id}>
                   <Td>{simulation.name}</Td>
                   <Td>{simulation.math}</Td>
@@ -105,16 +272,55 @@ export function MySimulations() {
                   <Td>{simulation.is_official ? 'Sim' : 'Não'}</Td>
                   <Td>
                     <HStack>
-                      <Button colorScheme="blue" size="sm">Editar</Button>
-                      <Button colorScheme="red" size="sm">Excluir</Button>
+                      <Button
+                        colorScheme="blue"
+                        size="sm"
+                        onClick={() => {
+                          setSelectedSimulation(simulation)
+                          editSimulationModalDisclosure.onOpen()
+                        }}
+                      >
+                        Editar
+                      </Button>
+                      <Button
+                        colorScheme="red"
+                        size="sm"
+                        onClick={() => {
+                          setSelectedSimulation(simulation)
+                          deleteSimulationModalDisclosure.onOpen()
+                        }}
+                      >
+                        Excluir
+                      </Button>
                     </HStack>
                   </Td>
+                  {editSimulationModalDisclosure.isOpen &&
+                    selectedSimulation?.id === simulation.id && (
+                      <EditSimulationModal
+                        disclosure={editSimulationModalDisclosure}
+                        simulation={selectedSimulation}
+                        onEdit={handleEditSimulation}
+                      />
+                    )}
+                  {deleteSimulationModalDisclosure.isOpen &&
+                    selectedSimulation?.id === simulation.id && (
+                      <DeleteSimulationDialog
+                        disclosure={deleteSimulationModalDisclosure}
+                        onDelete={() => handleDeleteSimulation(simulation.id)}
+                      />
+                    )}
                 </Tr>
               ))}
             </Tbody>
           </Table>
         )}
       </Box>
-    </Center>
+      {createSimulationModalDisclosure.isOpen && (
+        <CreateSimulationModal
+          disclosure={createSimulationModalDisclosure}
+          onCreate={handleCreateSimulation}
+        />
+      )}
+    </Flex>
   )
 }
